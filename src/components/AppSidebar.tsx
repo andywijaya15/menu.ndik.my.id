@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Hamburger, Home, Menu } from "lucide-react";
+import { Hamburger, Home } from "lucide-react";
 import { Link } from "react-router";
 
 const items = [
