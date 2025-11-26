@@ -5,14 +5,12 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/ui/data-table";
+import { useMenu } from "@/context/MenuContext";
+
+type Menu = { id: number; name: string };
 
 export default function Menu() {
-  type Menu = { id: number; name: string };
-
-  const [menus, setMenus] = useState<Menu[]>([
-    { id: 1, name: "NASI GORENG" },
-    { id: 2, name: "MIE AYAM" },
-  ]);
+  const { menus, setMenus } = useMenu();
 
   const [selected, setSelected] = useState<Menu | null>(null);
   const [name, setName] = useState("");
