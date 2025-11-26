@@ -9,22 +9,44 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 
 export default function Menu() {
-  const { menus, fetchMenus } = useMenu();
+  const { menus, fetchMenus, totalMenus } = useMenu();
   const [selected, setSelected] = useState<Menu | null>(null);
   const [name, setName] = useState("");
   const [open, setOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const perPage = 10;
+
+  const totalPages = Math.ceil(totalMenus / perPage);
+
+  const handlePrev = () => {
+    if (page > 1) {
+      const newPage = page - 1;
+      setPage(newPage);
+      fetchMenus(newPage, perPage);
+    }
+  };
+
+  const handleNext = () => {
+    if (page < totalPages) {
+      const newPage = page + 1;
+      setPage(newPage);
+      fetchMenus(newPage, perPage);
+    }
+  };
 
   const openCreate = () => {
     setSelected(null);
     setName("");
     setOpen(true);
   };
+
   const openEdit = (menu: Menu) => {
     setSelected(menu);
     setName(menu.name);
     setOpen(true);
   };
+
   const openDelete = (menu: Menu) => {
     setSelected(menu);
     setDeleteOpen(true);
@@ -87,6 +109,17 @@ export default function Menu() {
       </div>
 
       <DataTable columns={columns} data={menus} />
+      <div className="flex justify-between mt-4">
+        <Button onClick={handlePrev} disabled={page === 1}>
+          Prev
+        </Button>
+        <span>
+          Page {page} of {totalPages}
+        </span>
+        <Button onClick={handleNext} disabled={page === totalPages}>
+          Next
+        </Button>
+      </div>
 
       {/* CREATE / UPDATE MODAL */}
       <Dialog open={open} onOpenChange={setOpen}>

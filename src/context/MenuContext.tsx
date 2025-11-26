@@ -1,35 +1,44 @@
 import { supabase } from "@/supabaseClient";
 import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
 
-export type Menu = { id: string; name: string };
+export type Menu = { id: string; name: string; created_at: string; updated_at?: string };
 
 type MenuContextType = {
   menus: Menu[];
-  setMenus: (menus: Menu[]) => void;
-  fetchMenus: () => Promise<void>;
+  fetchMenus: (page?: number, perPage?: number) => Promise<void>;
+  totalMenus: number;
 };
 
 const MenuContext = createContext<MenuContextType | undefined>(undefined);
 
 export const MenuProvider = ({ children }: { children: ReactNode }) => {
   const [menus, setMenus] = useState<Menu[]>([]);
+  const [totalMenus, setTotalMenus] = useState(0);
 
-  const fetchMenus = async () => {
+  const fetchMenus = async (page = 1, perPage = 10) => {
     try {
-      const { data, error } = await supabase.from("menus").select("*").order("created_at");
+      const from = (page - 1) * perPage;
+      const to = page * perPage - 1;
+
+      const { data, count, error } = await supabase
+        .from("menus")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: true })
+        .range(from, to);
+
       if (error) throw error;
       setMenus(data || []);
+      setTotalMenus(count || 0);
     } catch (err: any) {
       console.error("Failed to fetch menus:", err.message);
     }
   };
 
-  // fetch awal saat mount
   useEffect(() => {
     fetchMenus();
   }, []);
 
-  return <MenuContext.Provider value={{ menus, setMenus, fetchMenus }}>{children}</MenuContext.Provider>;
+  return <MenuContext.Provider value={{ menus, fetchMenus, totalMenus }}>{children}</MenuContext.Provider>;
 };
 
 export const useMenu = () => {
