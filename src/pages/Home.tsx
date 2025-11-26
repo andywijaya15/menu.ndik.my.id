@@ -17,7 +17,7 @@ export default function Home() {
   const generateWeeklyMenu = () => {
     const shuffled = [...menus].sort(() => Math.random() - 0.5);
     const selected = shuffled.slice(0, 7);
-    const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+    const days = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU", "MINGGU"];
 
     const weekly: WeeklyMenu[] = selected.map((menu, idx) => ({
       day: days[idx],
