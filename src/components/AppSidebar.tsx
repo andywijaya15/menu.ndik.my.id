@@ -10,24 +10,47 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { supabase } from "@/supabaseClient";
 import { ChevronUp, Hamburger, Home, User2 } from "lucide-react";
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 const items = [
-  {
-    title: "Home",
-    url: "/home",
-    icon: Home,
-  },
-  {
-    title: "Menu",
-    url: "/menu",
-    icon: Hamburger,
-  },
+  { title: "Home", url: "/home", icon: Home },
+  { title: "Menu", url: "/menu", icon: Hamburger },
 ];
 
 export function AppSidebar() {
+  const [username, setUsername] = useState<string>("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
+      if (error) {
+        console.error("Failed to fetch user:", error.message);
+        return;
+      }
+
+      if (user) setUsername(user.email || "User");
+    };
+    fetchUser();
+  }, []);
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Logout failed:", error.message);
+      return;
+    }
+    navigate("/login");
+  };
+
   return (
     <Sidebar>
       <SidebarHeader />
@@ -38,7 +61,6 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => {
                 const active = location.pathname.startsWith(item.url);
-
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
@@ -56,28 +78,19 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup />
       </SidebarContent>
+
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> Username
-                  <ChevronUp className="ml-auto" />
+                  <User2 /> {username || "Loading..."} <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
-                <DropdownMenuItem>
-                  <span>Account</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Billing</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Sign out</span>
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>Sign Out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
