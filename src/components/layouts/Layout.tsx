@@ -1,6 +1,6 @@
 // Layout.tsx
 import { AppSidebar } from "../AppSidebar";
-import { ModeToggle } from "../mode-toggle";
+import { ModeToggle } from "../ModeToggle";
 import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
 
 export default function Layout({ children, title }: { children: React.ReactNode; title?: string }) {
