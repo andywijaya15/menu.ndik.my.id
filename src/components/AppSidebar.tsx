@@ -9,7 +9,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
 } from "@/components/ui/sidebar";
 import { ChevronUp, Hamburger, Home, User2 } from "lucide-react";
 import { Link } from "react-router";
