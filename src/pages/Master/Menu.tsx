@@ -1,14 +1,17 @@
 import Layout from "@/components/layouts/Layout";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { type ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { DataTable } from "@/components/ui/data-table";
 
 export default function Menu() {
   type Menu = { id: number; name: string };
 
   const [menus, setMenus] = useState<Menu[]>([
-    { id: 1, name: "Nasi Goreng" },
-    { id: 2, name: "Mie Ayam" },
+    { id: 1, name: "NASI GORENG" },
+    { id: 2, name: "MIE AYAM" },
   ]);
 
   const [selected, setSelected] = useState<Menu | null>(null);
@@ -42,12 +45,14 @@ export default function Menu() {
   };
 
   const handleSave = () => {
+    const formattedName = name.toUpperCase();
+
     if (selected) {
       // update
-      setMenus(menus.map((m) => (m.id === selected.id ? { ...m, name } : m)));
+      setMenus(menus.map((m) => (m.id === selected.id ? { ...m, name: formattedName } : m)));
     } else {
       // create
-      setMenus([...menus, { id: Date.now(), name }]);
+      setMenus([...menus, { id: Date.now(), name: formattedName }]);
     }
 
     setOpen(false);
@@ -55,11 +60,40 @@ export default function Menu() {
     setName("");
   };
 
+  const columns: ColumnDef<Menu>[] = [
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => row.original.name,
+    },
+    {
+      id: "actions",
+      header: "#",
+      cell: ({ row }) => {
+        const menu = row.original;
+        return (
+          <div className="flex gap-2">
+            <Button size="sm" variant="secondary" onClick={() => openEdit(menu)}>
+              Edit
+            </Button>
+            <Button size="sm" variant="destructive" onClick={() => openDelete(menu)}>
+              Delete
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
+
   return (
     <Layout title="Master Menu">
-      <Button onClick={openCreate}>+ Add Menu</Button>
+      <div className="flex justify-between mb-4">
+        <Button onClick={openCreate}>+ Add Menu</Button>
+      </div>
 
-      {/* CREATE & UPDATE MODAL */}
+      <DataTable columns={columns} data={menus} />
+
+      {/* CREATE / UPDATE MODAL */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
@@ -74,13 +108,11 @@ export default function Menu() {
             className="space-y-4"
           >
             <div>
-              <label className="block mb-2 text-sm">Name</label>
-              <input
-                type="text"
+              <label className="block mb-2 text-sm">Menu Name</label>
+              <Input
                 value={name}
-                className="w-full border rounded px-3 py-2"
-                placeholder="Masukkan nama menu"
                 onChange={(e) => setName(e.target.value)}
+                placeholder="Masukkan nama menu"
                 autoFocus
               />
             </div>
@@ -95,14 +127,14 @@ export default function Menu() {
         </DialogContent>
       </Dialog>
 
-      {/* DELETE CONFIRMATION MODAL */}
+      {/* DELETE MODAL */}
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Menu</DialogTitle>
           </DialogHeader>
           <p>
-            Are you sure want to delete <span className="font-bold">{selected?.name}</span>?
+            Are you sure you want to delete <span className="font-bold">{selected?.name}</span>?
           </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteOpen(false)}>
@@ -114,24 +146,6 @@ export default function Menu() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {/* LIST MENU */}
-      <div className="mt-6 space-y-2">
-        {menus.map((menu) => (
-          <div key={menu.id} className="flex justify-between items-center p-3 border rounded">
-            <span>{menu.name}</span>
-
-            <div className="space-x-2">
-              <Button variant="secondary" onClick={() => openEdit(menu)}>
-                Edit
-              </Button>
-              <Button variant="destructive" onClick={() => openDelete(menu)}>
-                Delete
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
     </Layout>
   );
 }
