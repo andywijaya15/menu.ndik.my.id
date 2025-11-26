@@ -7,10 +7,10 @@ import { MenuProvider } from "./context/MenuContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <MenuProvider>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <MenuProvider>
         <App />
-      </ThemeProvider>
-    </MenuProvider>
+      </MenuProvider>
+    </ThemeProvider>
   </StrictMode>
 );
