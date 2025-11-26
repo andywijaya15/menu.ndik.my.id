@@ -12,7 +12,7 @@ type WeeklyMenu = {
   date: string;
 };
 
-export const Home = () => {
+export default function Home() {
   const { menus } = useMenu();
   const [weeklyMenu, setWeeklyMenu] = useState<WeeklyMenu[]>([]);
   const [loading, setLoading] = useState(false);
@@ -120,4 +120,4 @@ export const Home = () => {
       </div>
     </Layout>
   );
-};
+}
