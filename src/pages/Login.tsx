@@ -59,7 +59,7 @@ export default function Login() {
 
           {/* Alert success */}
           {success && (
-            <Alert variant="success">
+            <Alert variant={"default"}>
               <AlertTitle>Success</AlertTitle>
               <AlertDescription>{success}</AlertDescription>
             </Alert>
