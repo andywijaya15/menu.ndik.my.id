@@ -1,8 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 
 import Home from "./pages/Home";
-import MenuList from "./pages/Menu/MenuList";
-import MenuCreate from "./pages/Menu/MenuCreate";
+import Menu from "./pages/Master/Menu";
 
 export default function App() {
   return (
@@ -11,8 +10,7 @@ export default function App() {
         <Route path="/" element={<Navigate to="/home" replace />} />
 
         <Route path="/home" element={<Home />} />
-        <Route path="/menu" element={<MenuList />} />
-        <Route path="/menu/create" element={<MenuCreate />} />
+        <Route path="/menu" element={<Menu />} />
       </Routes>
     </BrowserRouter>
   );
