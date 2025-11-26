@@ -1,11 +1,24 @@
-import Sidebar from "./Sidebar";
+// Layout.tsx
+import { AppSidebar } from "../AppSidebar";
+import { ModeToggle } from "../mode-toggle";
+import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
 
-export default function Layout({ children }) {
+export default function Layout({ children, title }: { children: React.ReactNode; title?: string }) {
   return (
-    <div className="flex">
-      <Sidebar />
+    <SidebarProvider>
+      <AppSidebar />
+      <main className="w-full max-w-full px-4 py-4 md:px-6">
+        <div className="flex items-center gap-3 mb-6 flex-wrap">
+          <SidebarTrigger />
+          {title && <h1 className="text-xl font-bold">{title}</h1>}
 
-      <main className="flex-1 p-6 min-h-screen bg-gray-50">{children}</main>
-    </div>
+          <div className="ml-auto">
+            <ModeToggle />
+          </div>
+        </div>
+
+        {children}
+      </main>
+    </SidebarProvider>
   );
 }
