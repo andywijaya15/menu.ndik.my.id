@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 
 import Home from "./pages/Home";
 import MenuList from "./pages/Menu/MenuList";
@@ -8,6 +8,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Navigate to="/home" replace />} />
+
         <Route path="/home" element={<Home />} />
         <Route path="/menu" element={<MenuList />} />
         <Route path="/menu/create" element={<MenuCreate />} />
