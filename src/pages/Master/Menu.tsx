@@ -1,17 +1,15 @@
 import Layout from "@/components/layouts/Layout";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/data-table";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { useMenu, type Menu } from "@/context/MenuContext";
+import { supabase } from "@/supabaseClient";
 import { type ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { DataTable } from "@/components/ui/data-table";
-import { useMenu } from "@/context/MenuContext";
-
-type Menu = { id: number; name: string };
 
 export default function Menu() {
-  const { menus, setMenus } = useMenu();
-
+  const { menus, fetchMenus } = useMenu();
   const [selected, setSelected] = useState<Menu | null>(null);
   const [name, setName] = useState("");
   const [open, setOpen] = useState(false);
@@ -22,48 +20,47 @@ export default function Menu() {
     setName("");
     setOpen(true);
   };
-
   const openEdit = (menu: Menu) => {
     setSelected(menu);
     setName(menu.name);
     setOpen(true);
   };
-
   const openDelete = (menu: Menu) => {
     setSelected(menu);
     setDeleteOpen(true);
   };
 
-  const handleDelete = () => {
-    if (selected) {
-      setMenus(menus.filter((m) => m.id !== selected.id));
+  const handleSave = async () => {
+    const formattedName = name.toUpperCase();
+    try {
+      if (selected) {
+        await supabase.from("menus").update({ name: formattedName, updated_at: new Date() }).eq("id", selected.id);
+      } else {
+        await supabase.from("menus").insert([{ name: formattedName, updated_at: new Date() }]);
+      }
+      await fetchMenus(); // update context
+      setOpen(false);
+      setSelected(null);
+      setName("");
+    } catch (err: any) {
+      console.error("Failed to save menu:", err.message);
     }
-    setDeleteOpen(false);
-    setSelected(null);
   };
 
-  const handleSave = () => {
-    const formattedName = name.toUpperCase();
-
-    if (selected) {
-      // update
-      setMenus(menus.map((m) => (m.id === selected.id ? { ...m, name: formattedName } : m)));
-    } else {
-      // create
-      setMenus([...menus, { id: Date.now(), name: formattedName }]);
+  const handleDelete = async () => {
+    if (!selected) return;
+    try {
+      await supabase.from("menus").delete().eq("id", selected.id);
+      await fetchMenus(); // update context
+      setDeleteOpen(false);
+      setSelected(null);
+    } catch (err: any) {
+      console.error("Failed to delete menu:", err.message);
     }
-
-    setOpen(false);
-    setSelected(null);
-    setName("");
   };
 
   const columns: ColumnDef<Menu>[] = [
-    {
-      accessorKey: "name",
-      header: "Name",
-      cell: ({ row }) => row.original.name,
-    },
+    { accessorKey: "name", header: "Name", cell: ({ row }) => row.original.name },
     {
       id: "actions",
       header: "#",
@@ -97,7 +94,6 @@ export default function Menu() {
           <DialogHeader>
             <DialogTitle>{selected ? "Update Menu" : "Add Menu"}</DialogTitle>
           </DialogHeader>
-
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -114,7 +110,6 @@ export default function Menu() {
                 autoFocus
               />
             </div>
-
             <DialogFooter>
               <Button variant="outline" type="button" onClick={() => setOpen(false)}>
                 Cancel
