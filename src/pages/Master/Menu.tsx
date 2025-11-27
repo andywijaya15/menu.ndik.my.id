@@ -4,7 +4,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useMenu, type Menu } from "@/context/MenuContext";
-import { supabase } from "@/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { type ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 

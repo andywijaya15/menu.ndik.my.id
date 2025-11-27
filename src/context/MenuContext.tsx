@@ -1,4 +1,4 @@
-import { supabase } from "@/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
 
 export type Menu = { id: string; name: string; created_at: string; updated_at?: string };
