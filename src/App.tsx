@@ -3,8 +3,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { PublicRoute } from "./components/PublicRoute";
 import { AuthProvider } from "./context/AuthContext";
+import Login from "./pages/Auth/Login";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
 import Menu from "./pages/Master/Menu";
 
 export default function App() {
